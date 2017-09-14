@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="">
+    <link rel="icon" href="#">
 
     <title>Wikipedia Viewer</title>
 
@@ -14,13 +15,22 @@
 
     <!-- Custom styles for this template -->
     <style type="text/css">
-        .container {
-            background-image: url('http://lorempixel.com/g/1920/1080/');
+        body {
+            margin: 0 auto;
         }
+        
+        .container {
+            min-height: 100vh;
+            background-image: url('http://lorempixel.com/g/1920/1080/');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
         h1 {
             padding: 3rem 1.5rem;
             text-align: center;
         }
+
     </style>
 </head>
 
@@ -28,8 +38,13 @@
 <body>
 
     <div class="container">
-            <h1>Wikipedia Viewer</h1>
-            <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+        <h1>Wikipedia Viewer</h1>
+
+        <div class="input-group">
+            <a id="go" class="btn btn-primary">Go</a>
+            <input type="text" placeholder="Search">
+            <a id="search" class="btn btn-secondary">Random</a>
+        </div>
     </div>
     <!-- /.container -->
 
@@ -57,66 +72,69 @@
             }
 
         }())
+
     </script>
     <script>
-    var arrResults = [];
-var html = '';
+        var arrResults = [];
+        var html = '';
 
-// Create structure for the data
-function Result(title, snippet) {
-  this.title = title;
-  this.snippet = snippet;
-}
+        // Create structure for the data
+        function Result(title, snippet) {
+            this.title = title;
+            this.snippet = snippet;
+        }
 
-function search() {
-  // Use Ajax to handle things
-  $.ajax({
-    url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch=' + $('#search').val(),
-    dataType: 'jsonp',
-    type: 'POST',
-    headers: {
-      'Api-User-Agent': 'Example/1.0'
-    },
-    success: function(data) {
+        function search() {
+            // Use Ajax to handle things
+            $.ajax({
+                url: 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch=' + $('#search').val(),
+                dataType: 'jsonp',
+                type: 'POST',
+                headers: {
+                    'Api-User-Agent': 'Example/1.0'
+                },
+                success: function(data) {
 
-      // First we clear the children from our class to make sure no previous results are showing.
-      $('.results').empty();
+                    // First we clear the children from our class to make sure no previous results are showing.
+                    $('.results').empty();
 
-      // Then we also clear the array with the results before providing new information.
-      arrResults.length = 0;
-      var resArr = data.query.search;
+                    // Then we also clear the array with the results before providing new information.
+                    arrResults.length = 0;
+                    var resArr = data.query.search;
 
-      //For each result, generate the html data.
-      for (var result in resArr) {
-        arrResults.push(new Result(resArr[result].title, resArr[result].snippet));
-        html = '<div id="articles" class="well"><a href="https://en.wikipedia.org/wiki/' + resArr[result].title + '"target="_blank"><h3>' + resArr[result].title + '</h3><p>' + resArr[result].snippet + '</p></a></div>';
+                    //For each result, generate the html data.
+                    for (var result in resArr) {
+                        arrResults.push(new Result(resArr[result].title, resArr[result].snippet));
+                        html = '<div id="articles" class="well"><a href="https://en.wikipedia.org/wiki/' + resArr[result].title + '"target="_blank"><h3>' + resArr[result].title + '</h3><p>' + resArr[result].snippet + '</p></a></div>';
 
-        // Displays the elements to the page
-        $('.results').append(html);
-      }
-    }
-  });
+                        // Displays the elements to the page
+                        $('.results').append(html);
+                    }
+                }
+            });
 
-  // This will handle when to display results based on the search bar.
-  if ($('#search').val().length > 0) {
-    $('.articles').css('display', 'none');
+            // This will handle when to display results based on the search bar.
+            if ($('#search').val().length > 0) {
+                $('.articles').css('display', 'none');
 
-  } else if ($('#search').val().length < 1) {
-    // display everything again
-    $('.articles').css('display', 'block');
-  }
+            } else if ($('#search').val().length < 1) {
+                // display everything again
+                $('.articles').css('display', 'block');
+            }
 
-  // This make things tick with each key stroke
-  $('#search').unbind('keyup');
-  $('#search').keyup(function() {
-    search();
-  });
-}
+            // This make things tick with each key stroke
+            $('#search').unbind('keyup');
+            $('#search').keyup(function() {
+                search();
+            });
+        }
 
-$('#search').keyup(function() {
-  search();
-});
+        $('#search').keyup(function() {
+            search();
+        });
+
     </script>
 
 </body>
+
 </html>
